@@ -7,17 +7,16 @@ The original source of this was JackSlateur/mellanox-rancid, however that was de
 for the rancid 2 paradigm.  This version is updated to work with the better
 framework of rancid 3.
 
-The originals had a specific `mlnxlogin`, however testing seems to show that
-the native `clogin` in rancid v3 works just fine, so while `mlnxlogin` is included
-for now, it is untested by me and not required.
-
 Installation
 ---
 
+- Copy `mlnxlogin` to your rancid bin location (`/usr/local/rancid/bin/` perhaps)
+- Modify the path to expect at the start of it if required
+- `chmod +x /usr/local/rancid/bin/mlnxlogin`
 - Copy mellanox.pm to your rancid libexec location (`/usr/local/rancid/lib/rancid` or somesuch)
 - Modify the path to perl at the start of it if required
 - `chmod +x /usr/local/rancid/libexec/mellanox.pm`
-- Tell rancid how to use it, edit `rancid.types.conf` (in `/usr/local/rancid/etc` or somesuch)
+- Tell rancid how to use it, edit `rancid.types.conf` (in `/usr/local/rancid/etc` or the like)
 and add:
 ```
 mellanox;login;mlnxlogin
