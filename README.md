@@ -1,25 +1,31 @@
 What is this
 ===
 
-This is a couple of script, dirtily adapted from Cisco's support on rancid 2.3.
-Rancid 2.3 and 3.7 is supported.
+Support for Mellanox (now NVIDIA) switches running the Onyx operating system.
+
+The original source of this was JackSlateur/mellanox-rancid, however that was developed
+for the rancid 2 paradigm.  This version is updated to work with the better
+framework of rancid 3.
+
+The originals had a specific `mlnxlogin`, however testing seems to show that
+the native `clogin` in rancid v3 works just fine, so while `mlnxlogin` is included
+for now, it is untested by me and not required.
 
 Installation
 ---
 
-- Copy both scripts to /var/lib/rancid/bin
-- `chmod +x /var/lib/rancid/bin/mlnx*`
-- Add a router in router.db, using the `mellanox` hardware type
-- For rancid 2.3:
-  - edit /var/lib/rancid/bin/rancid-fe, you will find a `%vendortable` variable, add the entry `'mellanox'      => 'mlnxrancid'`:
-  ```
-  %vendortable = (
-    'cat5'      => 'cat5rancid',
-    'cisco'     => 'rancid',
-    'cisco-nx'      => 'nxrancid',
-    'cisco-xr'          => 'xrrancid',
-    'mellanox'      => 'mlnxrancid',
-    'mrtd'      => 'mrancid',
-    );
-- For rancid 3.7:
-    - Edit /etc/rancid/rancid.types.conf, add `mellanox;script;mlnxrancid`
+- Copy mellanox.pm to your rancid libexec location (`/usr/local/rancid/lib/rancid` or somesuch)
+- Modify the path to perl at the start of it if required
+- `chmod +x /usr/local/rancid/libexec/mellanox.pm`
+- Tell rancid how to use it, edit `rancid.types.conf` (in `/usr/local/rancid/etc` or somesuch)
+and add:
+```
+mellanox;login;mlnxlogin
+#mellanox;script;mlnxrancid
+mellanox;script;rancid -t mellanox
+#mellanox;login;clogin
+mellanox;module;mellanox
+mellanox;inloop;mellanox::inloop
+mellanox;command;mellanox::ShowConfiguration;write terminal
+```
+- Add your device to `.clogin` and to your `router.db` as normal, with type `mellanox`
