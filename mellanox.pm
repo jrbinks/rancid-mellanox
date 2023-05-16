@@ -199,6 +199,9 @@ sub ShowConfiguration {
         next if (/^## Generated at /);
 
         # Filter out some sensitive data:
+	# "show running-config" (or "write terminal") produce an abbreviated config
+        # which amongst other things does not display secrets
+        # "show running-config expanded" has more detail, including secrets
         # In fact by default Onyx does not show most sensitive strings in
         # output from "write terminal", so most of this is unnecessary
         #if ( $filter_commstr &&
