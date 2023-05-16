@@ -196,6 +196,8 @@ sub ShowConfiguration {
 
         $linecnt++;
 
+        next if (/^## Generated at /);
+
         # Filter out some sensitive data:
         # In fact by default Onyx does not show most sensitive strings in
         # output from "write terminal", so most of this is unnecessary
