@@ -16,11 +16,10 @@ rancid 3.x
 - Copy `mlnxlogin` to your rancid bin location (`/usr/local/rancid/bin/` perhaps).
 - Modify the path to expect at the start of it if required.
 - `chmod +x /usr/local/rancid/bin/mlnxlogin`
-- Copy mellanox.pm to your rancid libexec location (`/usr/local/rancid/lib/rancid` or somesuch)
-- Modify the path to perl at the start of it if required
+- Copy mellanox.pm to your rancid libexec location (`/usr/local/rancid/lib/rancid` or somesuch).
+- Modify the path to perl at the start of it if required.
 - `chmod +x /usr/local/rancid/libexec/mellanox.pm`
-- Edit `rancid.types.conf` (in `/usr/local/rancid/etc` or the like)
-and add:
+- Edit `rancid.types.conf` (in `/usr/local/rancid/etc` or the like) and add:
 ```
 mellanox;login;mlnxlogin
 #mellanox;script;mlnxrancid
@@ -31,11 +30,11 @@ mellanox;inloop;mellanox::inloop
 mellanox;command;mellanox::ShowConfiguration;show running-config expanded
 #mellanox;command;mellanox::ShowConfiguration;show running-config
 ```
-- Edit `router.db` as normal, with type `mellanox`:
+- Edit `router.db` to add a device as normal, with type `mellanox`:
 ```
 10.0.0.1;mellanox;up
 ```
-- Edit your `.cloginrc` with something like:
+- Edit your `.cloginrc` to setup connection information for the device, with something like:
 ```
 add user routername admin
 add password routername {apassword} {}
@@ -43,7 +42,7 @@ add method routername ssh
 add autoenable routername {0}
 add cyphertype routername {aes128-ctr}
 ```
-- Create a user:
+- Optionally, if you don't want to use `admin`, create another user on the device:
 ```
 conf t
 username rancid password apassword
@@ -55,16 +54,16 @@ no username rancid disable
 # Note On Secrets
 
 The output of `show running-config` obfusticates most secrets (apart from SNMP v2 community strings, which
-never seem to be protected.)  Such lines with secrets are commented out, and have asterisks inserted in place of the secret.
+never seem to be protected).  Such lines with secrets are commented out, and have asterisks inserted in place of the secret.
 
 The output of `show running-config expanded` exposes some secrets like encrypted user passwords, if
-the login user has the `admin` capability (but not if they have `monitor` capability).
+the login user has the `admin` capability, but not if they have `monitor` capability).
 
 Either way, the usual rancid variables (e.g. `FILTER_PWDS` and `NOCOMSTR`) will be honoured,
 and if set appropriately will attempt to remove any secrets which are displayed.
 
 Curiously, the line `# boot bootmgr password 7 ********` which appears in the
-`show running-config` output disappears entirely with ` `show running-config expanded`.
+`show running-config` output disappears entirely with `show running-config expanded`.
 
 # Caveats and Issues
 
