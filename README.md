@@ -54,14 +54,17 @@ no username rancid disable
 
 # Note On Secrets
 
-`show running-config` does not show most secrets (apart from SNMP v2 community strings, which
-never seem to be protected.  Lines with secrets are commented out, and have asterisks inserted.
+The output of `show running-config` obfusticates most secrets (apart from SNMP v2 community strings, which
+never seem to be protected.)  Such lines with secrets are commented out, and have asterisks inserted in place of the secret.
 
-`show running-config expanded` command exposes some secrets like encrypted user passwords, if
+The output of `show running-config expanded` exposes some secrets like encrypted user passwords, if
 the login user has the `admin` capability (but not if they have `monitor` capability).
 
 Either way, the usual rancid variables (e.g. `FILTER_PWDS` and `NOCOMSTR`) will be honoured,
 and if set appropriately will attempt to remove any secrets which are displayed.
+
+Curiously, the line `# boot bootmgr password 7 ********` which appears in the
+`show running-config` output disappears entirely with ` `show running-config expanded`.
 
 # Caveats and Issues
 
