@@ -150,10 +150,15 @@ sub CommentOutput {
     my $sub_name = (caller(0))[3];
     print STDERR "    In $sub_name: $_" if ($debug);
 
+    my $in_power_info = 0;
+    my $in_mlag_info = 0;
+
     chomp;
 
     # Display the command we're processing in the output:
     ProcessHistory("COMMENTS", "", "", "!\n! '$cmd':\n!\n");
+
+    my $firstline = 1;
 
     while (<$INPUT>) {
         tr/\015//d;
@@ -167,6 +172,70 @@ sub CommentOutput {
         return(1) if command_not_valid($_);
         return(-1) if command_not_auth($_);
         next if skip_pattern($_);
+
+        # Now we skip or modify some lines from various commands to
+        # remove irrelevant content, or to avoid insignificant diffs
+        # More complex processing will have its own sub
+
+        # If we're at firstline and it is blank, skip it
+        if ( $firstline && /^$/ ) {
+            next;
+	} else {
+            $firstline = 0;
+       }
+
+        # 'show version':
+        if ( $cmd eq 'show version' ) {
+            next if /^Uptime:\s+/;
+            next if /^CPU load averages:\s+/;
+            next if /^System memory:\s+/;
+            next if /^Swap:\s+/;
+        }
+
+        # 'show power':
+        if ( $cmd eq 'show power' ) {
+            s/^(Module\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+)/$1$2$3$7$8/;
+            if ( /Watts/ ) {
+                $in_power_info = 1;
+                next;
+            }
+            s/^(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+)/$1$2$3$7$8/ if $in_power_info;
+            next if /^Total power (used|available):\s+/;
+        }
+
+        # 'show temperature':
+        if ( $cmd eq 'show temperature' ) {
+            s/^(\S+\s+)(.+ {2,})(\S+\s+)(\S+\s+)(\S+)/$1$2$3$5/;
+            next if /Celsius/;
+        }
+
+        # 'show fan':
+        if ( $cmd eq 'show fan' ) {
+            s/^(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+)/$1$2$3$5/;
+            next if /RPM/;
+        }
+
+        # 'show mlag:
+        if ( $cmd eq 'show mlag' ) {
+            s/^(ID\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+)/$1$2$3$4$5$6/;
+            s/^(\s+Port-Channel)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+)(\S+\s+)/$1$2$3$4$5$6$7/;
+            if ( /Port-Channel/ ) {
+                $in_mlag_info = 1;
+            }
+            if ( $in_mlag_info ) {
+                s/^(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+\s+)(\S+)(\s+)(.+)/$1$2$3$4$5$6/;
+            }
+        }
+
+        # 'show ntp':
+        if ( $cmd eq 'show ntp' ) {
+            next if /Offset/;
+            next if /Last Response/;
+        }
+
+        # Add the processed lines to the output buffer:
+        ProcessHistory("COMMENTS","","","! $_\n");
+
     }
 
     # Add a blank comment line to the output buffer
