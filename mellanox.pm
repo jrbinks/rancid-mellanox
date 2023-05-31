@@ -152,6 +152,7 @@ sub CommentOutput {
 
     my $in_power_info = 0;
     my $in_mlag_info = 0;
+    my $show_ntp_detail = 0;
 
     chomp;
 
@@ -229,8 +230,18 @@ sub CommentOutput {
 
         # 'show ntp':
         if ( $cmd eq 'show ntp' ) {
+            # Remove some lines
             next if /Offset/;
             next if /Last Response/;
+            # Most will only care to see that the clock is synchronised and
+            # the configured peer state, so that's the default position, but if
+            # necessary this toggle can be used to show more detail:
+            if ( ! $show_ntp_detail ) {
+                next if /Reference:/;
+                next if /Status/;
+                next if /Stratum/;
+                next if /Ref clock/;
+            }
         }
 
         # Add the processed lines to the output buffer:
