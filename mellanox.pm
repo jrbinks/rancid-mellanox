@@ -8,10 +8,8 @@ package mellanox;
 #
 # Contributed by J R Binks <jrbinks+rancid@gmail.com>
 #
-# Tested on:
+# https://github.com/jrbinks/rancid-mellanox
 #
-# HPE SN2410M
-# v3.9.2110
 
 use 5.010;
 use strict 'vars';

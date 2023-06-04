@@ -27,7 +27,24 @@ mellanox;script;rancid -t mellanox
 #mellanox;login;clogin
 mellanox;module;mellanox
 mellanox;inloop;mellanox::inloop
+mellanox;command;mellanox::CommentOutput;show version
+mellanox;command;mellanox::CommentOutput;show images
+mellanox;command;mellanox::CommentOutput;show bios
+mellanox;command;mellanox::CommentOutput;show inventory
+mellanox;command;mellanox::CommentOutput;show module
+mellanox;command;mellanox::CommentOutput;show power
+mellanox;command;mellanox::CommentOutput;show temperature
+mellanox;command;mellanox::CommentOutput;show fan
+mellanox;command;mellanox::CommentOutput;show leds
+mellanox;command;mellanox::CommentOutput;show mlag
+mellanox;command;mellanox::CommentOutput;show mlag-vip
+mellanox;command;mellanox::CommentOutput;show logging
+mellanox;command;mellanox::CommentOutput;show services small-servers
+mellanox;command;mellanox::CommentOutput;show ntp
+mellanox;command;mellanox::CommentOutput;show usernames
+# Select:
 mellanox;command;mellanox::ShowConfiguration;show running-config expanded
+# Or:
 #mellanox;command;mellanox::ShowConfiguration;show running-config
 ```
 - Edit `router.db` to add a device as normal, with type `mellanox`:
