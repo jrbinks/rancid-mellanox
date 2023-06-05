@@ -230,6 +230,7 @@ sub CommentOutput {
         if ( $cmd eq 'show ntp' ) {
             # Remove some lines
             next if /Offset/;
+            next if /Poll Interval/;
             next if /Last Response/;
             # Most will only care to see that the clock is synchronised and
             # the configured peer state, so that's the default position, but if
